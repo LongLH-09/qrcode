@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>QR Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 40px;
+        }
+        input {
+            width: 320px;
+            padding: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-left: 10px;
+        }
+        img {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Generate QR Code</h2>
+
+<input id="data" placeholder="Nhập link đi rồi hẵng bấm Generate nhe!" />
+<button onclick="generate()">Generate</button>
+
+<br>
+<img id="qr" />
+
+<script>
+    async function generate() {
+        const data = document.getElementById('data').value;
+        if (!data) {
+            alert("Nhập đi đã, không nhập sao Generate được chứ!");
+            return;
+        }
+        const response = await fetch('/api/qr-code/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ data })
+        });
+
+        if (!response.ok) {
+            alert("Generate QR thất bại mất tiu òi");
+            return;
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+
+        document.getElementById('qr').src = url;
+    }
+</script>
+
+</body>
+</html>
